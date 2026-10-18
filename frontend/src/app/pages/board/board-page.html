@@ -1,0 +1,108 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Applications</h1>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        placeholder="Search company, role, location"
+        aria-label="Search applications"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+        data-testid="board-search"
+      />
+    </mat-form-field>
+
+    <button mat-flat-button (click)="add()" data-testid="add-application">
+      <mat-icon>add</mat-icon> New application
+    </button>
+  </div>
+
+  @if (store.loading() && !store.loaded()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (store.loaded() && store.items().length === 0) {
+    <div class="empty-state">
+      <mat-icon>work_outline</mat-icon>
+      <h2>No applications yet</h2>
+      <p>Add your first one - paste a job posting and let AI fill in the details.</p>
+      <button mat-flat-button (click)="add()"><mat-icon>add</mat-icon> Add application</button>
+    </div>
+  } @else {
+    <div class="board" cdkDropListGroup>
+      @for (col of columns(); track col.status) {
+        <section class="column" [attr.aria-label]="labels[col.status]" [attr.data-testid]="'column-' + col.status">
+          <header>
+            <span class="status-dot" [class]="'status-dot status-' + col.status"></span>
+            <h2>{{ labels[col.status] }}</h2>
+            <span class="count" [attr.data-testid]="'count-' + col.status">{{ col.items.length }}</span>
+            <button mat-icon-button class="add" (click)="add(col.status)" [attr.aria-label]="'Add to ' + labels[col.status]">
+              <mat-icon>add</mat-icon>
+            </button>
+          </header>
+
+          <div
+            class="cards"
+            cdkDropList
+            [cdkDropListData]="col.status"
+            (cdkDropListDropped)="drop($event)"
+          >
+            @for (app of col.items; track app.id) {
+              <article
+                class="card"
+                cdkDrag
+                [cdkDragData]="app"
+                (cdkDragStarted)="onDragStarted()"
+                (cdkDragEnded)="onDragEnded()"
+                (click)="view(app)"
+                (keydown.enter)="view(app)"
+                tabindex="0"
+                [attr.data-testid]="'card-' + app.id"
+                [attr.aria-label]="app.role + ' at ' + app.company"
+              >
+                <div class="card-title">{{ app.company }}</div>
+                <div class="card-role">{{ app.role }}</div>
+
+                @if (app.skills.length > 0) {
+                  <div class="skills">
+                    @for (s of app.skills.slice(0, 3); track s) {
+                      <span class="badge-soft">{{ s }}</span>
+                    }
+                    @if (app.skills.length > 3) {
+                      <span class="badge-soft">+{{ app.skills.length - 3 }}</span>
+                    }
+                  </div>
+                }
+
+                <div class="meta">
+                  @if (app.location) {
+                    <span><mat-icon>place</mat-icon>{{ app.location }}</span>
+                  }
+                  @if (app.appliedDate) {
+                    <span><mat-icon>event</mat-icon>{{ app.appliedDate | date: 'MMM d' }}</span>
+                  }
+                </div>
+
+                @switch (followUp(app)) {
+                  @case ('overdue') {
+                    <span class="badge-warn"><mat-icon>schedule</mat-icon> Follow up now</span>
+                  }
+                  @case ('today') {
+                    <span class="badge-warn"><mat-icon>schedule</mat-icon> Follow up today</span>
+                  }
+                  @case ('upcoming') {
+                    <span class="badge-soft"><mat-icon>schedule</mat-icon> Follow up {{ app.followUpDate | date: 'MMM d' }}</span>
+                  }
+                }
+              </article>
+            } @empty {
+              <p class="empty muted">Drop an application here</p>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+</div>

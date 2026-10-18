@@ -1,0 +1,108 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  @if (data(); as d) {
+    @if (!hasData()) {
+      <div class="empty-state">
+        <mat-icon>insights</mat-icon>
+        <h2>Nothing to analyse yet</h2>
+        <p>Add a few applications and your stats will show up here.</p>
+      </div>
+    } @else {
+      <section class="stats" aria-label="Key numbers">
+        <article class="stat" data-testid="stat-total">
+          <mat-icon>work_outline</mat-icon>
+          <div>
+            <div class="value">{{ d.total }}</div>
+            <div class="label">Applications</div>
+          </div>
+        </article>
+        <article class="stat" data-testid="stat-response">
+          <mat-icon>reply</mat-icon>
+          <div>
+            <div class="value">{{ d.responseRate }}%</div>
+            <div class="label">Response rate</div>
+          </div>
+        </article>
+        <article class="stat" data-testid="stat-interview">
+          <mat-icon>record_voice_over</mat-icon>
+          <div>
+            <div class="value">{{ d.interviewRate }}%</div>
+            <div class="label">Reached interview</div>
+          </div>
+        </article>
+        <article class="stat" data-testid="stat-days">
+          <mat-icon>hourglass_bottom</mat-icon>
+          <div>
+            <div class="value">{{ d.avgDaysToResponse ?? '-' }}<small>{{ d.avgDaysToResponse != null ? ' days' : '' }}</small></div>
+            <div class="label">Avg. time to first answer</div>
+          </div>
+        </article>
+        <article class="stat" [class.alert]="d.followUpsDue > 0" data-testid="stat-followups">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <div class="value">{{ d.followUpsDue }}</div>
+            <div class="label">Follow-ups due</div>
+          </div>
+        </article>
+      </section>
+
+      <div class="grid">
+        <section class="panel wide">
+          <h2>Applications per week</h2>
+          <div class="chart h-260">
+            @if (weeklyChart(); as cfg) {
+              <app-chart [config]="cfg" label="Applications per week, last 12 weeks" />
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>By status</h2>
+          <div class="chart h-260">
+            @if (statusChart(); as cfg) {
+              <app-chart [config]="cfg" label="Applications by status" />
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Funnel</h2>
+          <div class="chart h-200">
+            @if (funnelChart(); as cfg) {
+              <app-chart [config]="cfg" label="Applied, interview and offer counts" />
+            }
+          </div>
+        </section>
+
+        <section class="panel wide">
+          <h2>Needs a follow-up</h2>
+          @if (needFollowUp().length === 0) {
+            <p class="muted">You're all caught up. Nothing is waiting for a follow-up right now.</p>
+          } @else {
+            <ul class="followups" data-testid="followup-list">
+              @for (a of needFollowUp(); track a.id) {
+                <li>
+                  <button type="button" class="followup" (click)="open(a.id)">
+                    <span class="who"><strong>{{ a.company }}</strong> <span class="muted">{{ a.role }}</span></span>
+                    <app-status-chip [status]="a.status" />
+                    <span class="badge-warn"><mat-icon>schedule</mat-icon> {{ a.followUpDate | date: 'MMM d' }}</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+    }
+  }
+</div>

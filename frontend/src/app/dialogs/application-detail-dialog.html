@@ -1,0 +1,128 @@
+@if (app(); as a) {
+  <div class="head">
+    <div class="title">
+      <h2 mat-dialog-title class="company" data-testid="detail-company">{{ a.company }}</h2>
+      <p class="role">{{ a.role }}</p>
+    </div>
+    <app-status-chip [status]="a.status" />
+  </div>
+
+  <mat-dialog-content>
+    <mat-button-toggle-group
+      class="status-toggle"
+      [value]="a.status"
+      (change)="changeStatus($event.value)"
+      aria-label="Change status"
+      hideSingleSelectionIndicator
+    >
+      @for (s of statuses; track s) {
+        <mat-button-toggle [value]="s" [attr.data-testid]="'toggle-' + s">{{ labels[s] }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    <dl class="facts">
+      @if (a.location) {
+        <div><dt>Location</dt><dd>{{ a.location }}</dd></div>
+      }
+      @if (a.salaryRange) {
+        <div><dt>Salary</dt><dd>{{ a.salaryRange }}</dd></div>
+      }
+      @if (a.appliedDate) {
+        <div><dt>Applied</dt><dd>{{ a.appliedDate | date: 'mediumDate' }}</dd></div>
+      }
+      @if (a.followUpDate) {
+        <div>
+          <dt>Follow up</dt>
+          <dd>
+            {{ a.followUpDate | date: 'mediumDate' }}
+            @if (followUp() === 'overdue') {
+              <span class="badge-warn"><mat-icon>schedule</mat-icon> Overdue</span>
+            } @else if (followUp() === 'today') {
+              <span class="badge-warn"><mat-icon>schedule</mat-icon> Today</span>
+            }
+          </dd>
+        </div>
+      }
+      @if (a.jobUrl) {
+        <div>
+          <dt>Posting</dt>
+          <dd><a [href]="a.jobUrl" target="_blank" rel="noopener noreferrer">Open job posting</a></dd>
+        </div>
+      }
+    </dl>
+
+    @if (a.skills.length > 0) {
+      <mat-chip-set aria-label="Skills" class="skills">
+        @for (s of a.skills; track s) {
+          <mat-chip>{{ s }}</mat-chip>
+        }
+      </mat-chip-set>
+    }
+
+    @if (a.notes) {
+      <h3>Notes</h3>
+      <p class="text">{{ a.notes }}</p>
+    }
+
+    @if (a.jobDescription) {
+      <details class="description">
+        <summary>Job description</summary>
+        <p class="text">{{ a.jobDescription }}</p>
+      </details>
+    }
+
+    <h3>History</h3>
+    <ol class="timeline" data-testid="history">
+      @for (h of history(); track $index) {
+        <li>
+          <span class="status-dot" [class]="'status-dot status-' + h.to"></span>
+          <span>
+            @if (h.from) {
+              {{ labels[h.from] }} &rarr; <strong>{{ labels[h.to] }}</strong>
+            } @else {
+              Added as <strong>{{ labels[h.to] }}</strong>
+            }
+          </span>
+          <span class="muted when">{{ h.changedAt | date: 'MMM d, y' }}</span>
+        </li>
+      }
+    </ol>
+
+    <h3 class="prep-title">
+      <mat-icon>auto_awesome</mat-icon> Interview prep
+    </h3>
+    @if (questions(); as qs) {
+      <ol class="questions" data-testid="questions">
+        @for (q of qs; track q.question) {
+          <li>
+            <span class="badge-soft">{{ q.category }}</span>
+            <p class="q">{{ q.question }}</p>
+            @if (q.tip) {
+              <p class="tip muted">Tip: {{ q.tip }}</p>
+            }
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="muted prep-hint">Generate realistic interview questions for this role with AI.</p>
+    }
+    @if (prepError()) {
+      <p class="prep-error" role="alert">{{ prepError() }}</p>
+    }
+    <button mat-stroked-button type="button" (click)="generatePrep()" [disabled]="prepBusy()" data-testid="prep">
+      <mat-icon>auto_awesome</mat-icon> {{ questions() ? 'Regenerate questions' : 'Generate interview questions' }}
+    </button>
+    @if (prepBusy()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button class="danger" type="button" (click)="delete()" data-testid="delete">
+      <mat-icon>delete_outline</mat-icon> Delete
+    </button>
+    <span class="spacer"></span>
+    <button mat-button mat-dialog-close type="button">Close</button>
+    <button mat-flat-button type="button" (click)="edit()" data-testid="edit"><mat-icon>edit</mat-icon> Edit</button>
+  </mat-dialog-actions>
+}

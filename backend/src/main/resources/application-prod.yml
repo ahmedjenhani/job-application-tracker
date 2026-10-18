@@ -1,0 +1,10 @@
+# Activated with SPRING_PROFILES_ACTIVE=prod (the Dockerfile / render.yaml do this).
+server:
+  # Render terminates HTTPS in front of the app; trust its forwarded headers.
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN

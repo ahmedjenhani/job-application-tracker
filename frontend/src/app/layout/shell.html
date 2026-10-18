@@ -1,0 +1,75 @@
+<mat-toolbar class="topbar">
+  <a class="brand" routerLink="/board" aria-label="Job Tracker home">
+    <span class="logo"><mat-icon>work_outline</mat-icon></span>
+    <span class="brand-name">Job Tracker</span>
+  </a>
+
+  <nav class="nav" aria-label="Main">
+    <a mat-button routerLink="/board" routerLinkActive="active" data-testid="nav-board">
+      <mat-icon>view_kanban</mat-icon><span class="label">Board</span>
+    </a>
+    <a mat-button routerLink="/list" routerLinkActive="active" data-testid="nav-list">
+      <mat-icon>table_rows</mat-icon><span class="label">List</span>
+    </a>
+    <a mat-button routerLink="/dashboard" routerLinkActive="active" data-testid="nav-dashboard">
+      <mat-icon>insights</mat-icon><span class="label">Dashboard</span>
+    </a>
+  </nav>
+
+  <span class="spacer"></span>
+
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="notificationMenu"
+    [matBadge]="notifications.unread()"
+    [matBadgeHidden]="notifications.unread() === 0"
+    matBadgeColor="warn"
+    matBadgeSize="medium"
+    aria-label="Notifications"
+    data-testid="bell"
+  >
+    <mat-icon>notifications</mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    (click)="theme.toggle()"
+    [attr.aria-label]="theme.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+  >
+    <mat-icon>{{ theme.mode() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
+  <button mat-button [matMenuTriggerFor]="userMenu" class="user-button" data-testid="user-menu">
+    <mat-icon>account_circle</mat-icon>
+    <span class="label">{{ auth.user()?.fullName }}</span>
+  </button>
+</mat-toolbar>
+
+<mat-menu #notificationMenu="matMenu" xPosition="before" class="notification-menu">
+  <div class="menu-header" (click)="$event.stopPropagation()">
+    <strong>Notifications</strong>
+    @if (notifications.unread() > 0) {
+      <button mat-button (click)="markAllRead()">Mark all read</button>
+    }
+  </div>
+  @for (n of notifications.items(); track n.id) {
+    <button mat-menu-item class="notification" [class.unread]="!n.read" (click)="openNotification(n)">
+      <span class="message">{{ n.message }}</span>
+      <span class="time muted">{{ n.createdAt | date: 'MMM d, HH:mm' }}</span>
+    </button>
+  } @empty {
+    <div class="menu-empty muted" (click)="$event.stopPropagation()">No notifications yet.</div>
+  }
+</mat-menu>
+
+<mat-menu #userMenu="matMenu" xPosition="before">
+  <div class="menu-user" (click)="$event.stopPropagation()">
+    <strong>{{ auth.user()?.fullName }}</strong>
+    <span class="muted">{{ auth.user()?.email }}</span>
+  </div>
+  <button mat-menu-item (click)="logout()" data-testid="logout"><mat-icon>logout</mat-icon>Sign out</button>
+</mat-menu>
+
+<main>
+  <router-outlet />
+</main>

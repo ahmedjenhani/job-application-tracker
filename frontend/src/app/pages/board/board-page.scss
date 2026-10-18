@@ -1,0 +1,144 @@
+.search {
+  width: min(340px, 100%);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(240px, 1fr));
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  align-items: start;
+}
+
+.column {
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  padding: 10px;
+  min-width: 240px;
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 10px;
+
+    h2 {
+      font-size: 0.95rem;
+    }
+
+    .count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 999px;
+      background: var(--mat-sys-surface-container-highest);
+      color: var(--mat-sys-on-surface-variant);
+    }
+
+    .add {
+      margin-left: auto;
+      width: 32px;
+      height: 32px;
+      padding: 4px;
+    }
+  }
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 90px;
+  border-radius: 10px;
+}
+
+.empty {
+  margin: 0;
+  padding: 24px 8px;
+  text-align: center;
+  font-size: 0.85rem;
+  border: 1px dashed var(--mat-sys-outline-variant);
+  border-radius: 10px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-lowest, var(--mat-sys-surface));
+  border: 1px solid var(--mat-sys-outline-variant);
+  cursor: grab;
+  transition: box-shadow 0.15s, border-color 0.15s;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--mat-sys-primary);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
+    outline: none;
+  }
+
+  .card-title {
+    font-weight: 600;
+  }
+
+  .card-role {
+    font-size: 0.88rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 0.78rem;
+    color: var(--mat-sys-on-surface-variant);
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+/* CDK drag visuals */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+  cursor: grabbing;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cards.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-receiving {
+  outline: 2px dashed var(--mat-sys-primary);
+  outline-offset: 2px;
+}

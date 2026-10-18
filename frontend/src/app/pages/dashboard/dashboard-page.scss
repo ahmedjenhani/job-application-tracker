@@ -1,0 +1,141 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  > .mat-icon {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  .value {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.1;
+
+    small {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+
+  .label {
+    font-size: 0.82rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &.alert > .mat-icon {
+    background: color-mix(in srgb, #dc2626 18%, transparent);
+    color: color-mix(in srgb, #dc2626 75%, var(--mat-sys-on-surface));
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  h2 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  &.wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.chart {
+  position: relative;
+}
+
+.h-260 {
+  height: 260px;
+}
+
+.h-200 {
+  height: 200px;
+}
+
+.followups {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.followup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--mat-sys-surface-container-high);
+    outline: none;
+  }
+
+  .who {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: 8px;
+    overflow: hidden;
+    white-space: nowrap;
+
+    strong {
+      flex: none;
+    }
+
+    .muted {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
+
+@media (max-width: 800px) {
+  .grid {
+    /* minmax(0, ...) lets the column shrink below its content's minimum width (charts, long rows) */
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

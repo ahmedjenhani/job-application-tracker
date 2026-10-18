@@ -1,0 +1,40 @@
+# Render Blueprint for the API. The database lives on Neon and the web UI on Vercel (see README, "Deploy").
+services:
+  - type: web
+    name: jobtracker-api
+    runtime: docker
+    rootDir: backend
+    plan: free
+    region: frankfurt
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # Neon connection, JDBC form, e.g. jdbc:postgresql://<host>/<db>?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      # The Vercel URL of the frontend, e.g. https://jobtracker.vercel.app (comma-separate several)
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: REMINDERS_ZONE
+        value: Africa/Tunis
+      # Optional: set these to send real reminder emails (e.g. Gmail SMTP with an app password)
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM
+        sync: false

@@ -1,0 +1,53 @@
+<div class="auth-wrap">
+  <section class="auth-card" aria-labelledby="title">
+    <div class="auth-logo"><mat-icon>work_outline</mat-icon></div>
+    <h1 id="title">Create your account</h1>
+    <p class="muted subtitle">Start tracking your job search in one place.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Full name</mat-label>
+        <input matInput formControlName="fullName" autocomplete="name" data-testid="fullName" />
+        @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+          <mat-error>Your name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" data-testid="email" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <mat-error>Enter a valid email address</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="new-password"
+          data-testid="password"
+        />
+        <mat-hint>At least 8 characters</mat-hint>
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <mat-error>Password must be 8 to 72 characters</mat-error>
+        }
+      </mat-form-field>
+
+      @if (error()) {
+        <p class="form-error" role="alert" data-testid="register-error">{{ error() }}</p>
+      }
+
+      <button mat-flat-button class="full" type="submit" [disabled]="pending()" data-testid="register-submit">
+        Create account
+      </button>
+      @if (pending()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+    </form>
+
+    <p class="switch muted">Already have an account? <a routerLink="/login">Sign in</a></p>
+  </section>
+</div>

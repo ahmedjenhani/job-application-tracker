@@ -1,0 +1,129 @@
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 4px;
+  background: var(--mat-sys-surface-container);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  padding: 0 12px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 16px;
+  text-decoration: none;
+  color: var(--mat-sys-on-surface);
+  font-weight: 700;
+}
+
+.logo {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+
+  .mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.nav {
+  display: flex;
+  gap: 2px;
+
+  a.active {
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.user-button .label {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+main {
+  min-height: calc(100vh - 64px);
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 4px 16px;
+  min-width: 320px;
+}
+
+.menu-empty {
+  padding: 16px;
+}
+
+.menu-user {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 12px;
+  gap: 2px;
+  font-size: 0.85rem;
+}
+
+.notification {
+  height: auto;
+  min-height: 56px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+
+  ::ng-deep .mat-mdc-menu-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: normal;
+  }
+
+  .time {
+    font-size: 0.75rem;
+  }
+
+  &.unread .message {
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 760px) {
+  .brand-name,
+  .nav .label,
+  .user-button .label {
+    display: none;
+  }
+
+  .brand {
+    margin-right: 4px;
+  }
+
+  /* Icon-only buttons: drop Material's 64px minimum width so the toolbar fits a phone. */
+  .nav a.mat-mdc-button,
+  .user-button.mat-mdc-button {
+    min-width: 40px;
+    padding: 0 10px;
+
+    .mat-icon {
+      margin: 0;
+    }
+  }
+
+  .topbar {
+    padding: 0 4px;
+  }
+}

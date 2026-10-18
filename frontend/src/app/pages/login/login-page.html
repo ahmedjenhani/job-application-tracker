@@ -1,0 +1,62 @@
+<div class="auth-wrap">
+  <section class="auth-card" aria-labelledby="title">
+    <div class="auth-logo"><mat-icon>work_outline</mat-icon></div>
+    <h1 id="title">Welcome back</h1>
+    <p class="muted subtitle">Sign in to track your applications.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" data-testid="email" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <mat-error>Enter a valid email address</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          autocomplete="current-password"
+          data-testid="password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="showPassword.set(!showPassword())"
+          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+        >
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <mat-error>Password is required</mat-error>
+        }
+      </mat-form-field>
+
+      @if (error()) {
+        <p class="form-error" role="alert" data-testid="login-error">{{ error() }}</p>
+      }
+
+      <button mat-flat-button class="full" type="submit" [disabled]="pending()" data-testid="login-submit">
+        Sign in
+      </button>
+      <button mat-stroked-button class="full" type="button" (click)="useDemo()" [disabled]="pending()" data-testid="demo-login">
+        <mat-icon>rocket_launch</mat-icon> Try the demo account
+      </button>
+
+      @if (pending()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+      @if (slow()) {
+        <p class="muted hint" role="status">
+          Waking up the server (free hosting) - this can take up to a minute the first time.
+        </p>
+      }
+    </form>
+
+    <p class="switch muted">New here? <a routerLink="/register">Create an account</a></p>
+  </section>
+</div>

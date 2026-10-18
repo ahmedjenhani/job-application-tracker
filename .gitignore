@@ -1,0 +1,28 @@
+# Secrets - never commit
+.env
+.env.*
+!.env.example
+
+# Backend
+backend/target/
+*.log
+*.iml
+.idea/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/ng-serve.log
+
+# End-to-end tests
+e2e/node_modules/
+e2e/test-results/
+e2e/screenshots/
+e2e/playwright-report/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json

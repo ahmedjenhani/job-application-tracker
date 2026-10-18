@@ -1,0 +1,59 @@
+# Runs the whole app (database + API + web UI) with one command:
+#   docker compose up --build
+# then open http://localhost:3000   (demo login: demo@example.com / Demo@1234)
+#
+# Settings are read from the .env file in this folder (copy .env.example to .env first).
+name: job-tracker
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: jobtracker
+      POSTGRES_USER: jobtracker
+      POSTGRES_PASSWORD: ${COMPOSE_DB_PASSWORD:-jobtracker}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobtracker -d jobtracker"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/jobtracker
+      DB_USERNAME: jobtracker
+      DB_PASSWORD: ${COMPOSE_DB_PASSWORD:-jobtracker}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in the .env file (copy .env.example)}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      CORS_ALLOWED_ORIGINS: http://localhost:${FRONTEND_PORT:-3000}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@jobtracker.local}
+      REMINDERS_CRON: ${REMINDERS_CRON:-0 0 8 * * *}
+    # Same memory budget as a free Render instance, so problems show up here first.
+    mem_limit: 512m
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8082}:8080"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    restart: unless-stopped
+
+volumes:
+  db-data:

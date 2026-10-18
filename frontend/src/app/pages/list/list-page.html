@@ -1,0 +1,93 @@
+<div class="page">
+  <div class="page-header">
+    <h1>All applications</h1>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter">
+      <mat-label>Status</mat-label>
+      <mat-select [value]="status()" (selectionChange)="status.set($event.value)" data-testid="status-filter">
+        <mat-option value="">All statuses</mat-option>
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ labels[s] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter search">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        placeholder="Search company, role, location"
+        aria-label="Search applications"
+        [value]="queryInput()"
+        (input)="queryInput.set($any($event.target).value)"
+        data-testid="list-search"
+      />
+    </mat-form-field>
+
+    <button mat-flat-button (click)="add()"><mat-icon>add</mat-icon> New application</button>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="table-wrap">
+    <table mat-table [dataSource]="rows()" data-testid="list-table">
+      <ng-container matColumnDef="company">
+        <th mat-header-cell *matHeaderCellDef>Company</th>
+        <td mat-cell *matCellDef="let a" class="strong">{{ a.company }}</td>
+      </ng-container>
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let a">{{ a.role }}</td>
+      </ng-container>
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef>Location</th>
+        <td mat-cell *matCellDef="let a" class="muted">{{ a.location || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let a"><app-status-chip [status]="a.status" /></td>
+      </ng-container>
+      <ng-container matColumnDef="applied">
+        <th mat-header-cell *matHeaderCellDef>Applied</th>
+        <td mat-cell *matCellDef="let a" class="muted">{{ a.appliedDate ? (a.appliedDate | date: 'MMM d, y') : '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="followUp">
+        <th mat-header-cell *matHeaderCellDef>Follow up</th>
+        <td mat-cell *matCellDef="let a">
+          @if (a.followUpDate) {
+            @if (followUp(a) === 'overdue') {
+              <span class="badge-warn"><mat-icon>schedule</mat-icon> {{ a.followUpDate | date: 'MMM d' }}</span>
+            } @else {
+              <span class="muted">{{ a.followUpDate | date: 'MMM d, y' }}</span>
+            }
+          } @else {
+            <span class="muted">-</span>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: columns"
+        class="row"
+        tabindex="0"
+        (click)="view(row)"
+        (keydown.enter)="view(row)"
+        [attr.data-testid]="'row-' + row.id"
+      ></tr>
+    </table>
+
+    @if (!loading() && rows().length === 0) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <p>No applications match these filters.</p>
+      </div>
+    }
+  </div>
+</div>

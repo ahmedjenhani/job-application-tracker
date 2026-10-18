@@ -1,0 +1,136 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit application' : 'New application' }}</h2>
+
+<mat-dialog-content>
+  <section class="ai-panel" [class.open]="aiOpen()">
+    <button type="button" class="ai-toggle" (click)="aiOpen.set(!aiOpen())" [attr.aria-expanded]="aiOpen()" data-testid="ai-toggle">
+      <mat-icon>auto_awesome</mat-icon>
+      <span>Auto-fill from a job posting <small class="muted">(AI)</small></span>
+      <mat-icon class="chevron">{{ aiOpen() ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+
+    @if (aiOpen()) {
+      <div class="ai-body">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Paste the job posting here</mat-label>
+          <textarea
+            matInput
+            rows="5"
+            [value]="aiText()"
+            (input)="aiText.set($any($event.target).value)"
+            maxlength="12000"
+            data-testid="ai-text"
+          ></textarea>
+        </mat-form-field>
+        <div class="ai-actions">
+          <button mat-flat-button type="button" (click)="extract()" [disabled]="aiBusy()" data-testid="ai-extract">
+            <mat-icon>auto_awesome</mat-icon> Extract details
+          </button>
+          @if (aiResult(); as r) {
+            <span class="ai-result" [class.ok]="r.ok" [class.fail]="!r.ok" role="status" data-testid="ai-result">{{ r.text }}</span>
+          }
+        </div>
+        @if (aiBusy()) {
+          <mat-progress-bar mode="indeterminate" />
+        }
+      </div>
+    }
+  </section>
+
+  <form [formGroup]="form" class="grid" (ngSubmit)="save()" id="application-form" novalidate>
+    <mat-form-field appearance="outline">
+      <mat-label>Company</mat-label>
+      <input matInput formControlName="company" data-testid="company" />
+      @if (form.controls.company.touched && form.controls.company.invalid) {
+        <mat-error>Company is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Role</mat-label>
+      <input matInput formControlName="role" data-testid="role" />
+      @if (form.controls.role.touched && form.controls.role.invalid) {
+        <mat-error>Role is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" data-testid="location" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Salary range</mat-label>
+      <input matInput formControlName="salaryRange" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status" data-testid="status">
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ labels[s] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Job URL</mat-label>
+      <input matInput formControlName="jobUrl" type="url" placeholder="https://" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Applied on</mat-label>
+      <input matInput [matDatepicker]="appliedPicker" formControlName="appliedDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="appliedPicker" />
+      <mat-datepicker #appliedPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Follow up on</mat-label>
+      <input matInput [matDatepicker]="followPicker" formControlName="followUpDate" data-testid="followUp" />
+      <mat-datepicker-toggle matIconSuffix [for]="followPicker" />
+      <mat-datepicker #followPicker />
+      <mat-hint>You'll get a reminder on this day</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="wide">
+      <mat-label>Skills</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Skills">
+        @for (skill of skills(); track skill) {
+          <mat-chip-row (removed)="removeSkill(skill)">
+            {{ skill }}
+            <button matChipRemove [attr.aria-label]="'Remove ' + skill"><mat-icon>cancel</mat-icon></button>
+          </mat-chip-row>
+        }
+        <input
+          placeholder="Type a skill and press Enter"
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="[13, 188]"
+          (matChipInputTokenEnd)="addSkill($event)"
+          data-testid="skills-input"
+        />
+      </mat-chip-grid>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="wide">
+      <mat-label>Notes</mat-label>
+      <textarea matInput rows="3" formControlName="notes"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="wide">
+      <mat-label>Job description</mat-label>
+      <textarea matInput rows="4" formControlName="jobDescription"></textarea>
+      <mat-hint>Used to generate interview questions</mat-hint>
+    </mat-form-field>
+  </form>
+
+  @if (error()) {
+    <p class="form-error" role="alert" data-testid="form-error">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancel</button>
+  <button mat-flat-button type="submit" form="application-form" [disabled]="saving()" data-testid="save">
+    {{ isEdit ? 'Save changes' : 'Add application' }}
+  </button>
+</mat-dialog-actions>
