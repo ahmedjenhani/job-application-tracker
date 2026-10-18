@@ -3,9 +3,13 @@
 A full-stack web app to manage a job search: keep every application on a Kanban board, see analytics about your
 funnel, get follow-up reminders, and let AI fill in forms and prepare you for interviews.
 
-> **Live demo:** _add the Vercel URL here after deploying_ &nbsp;|&nbsp; **API docs:** _add the Render URL_`/swagger-ui.html`
-> &nbsp;|&nbsp; **Demo login:** `demo@example.com` / `Demo@1234`
-> (free hosting: the very first request after a quiet period can take up to a minute while the server wakes up)
+> **Live demo:** <https://job-application-tracker-one-flax.vercel.app> &nbsp;|&nbsp;
+> **API docs:** <https://jobtracker-api-rc84.onrender.com/swagger-ui/index.html>
+>
+> **Demo login:** `demo@example.com` / `Demo@1234` (or click "Try the demo account" on the login page)
+>
+> Hosted on free tiers (Vercel, Render, Neon): the very first request after a quiet period can take up to a minute
+> while the API server wakes up.
 
 ![Kanban board](docs/screenshots/board.png)
 

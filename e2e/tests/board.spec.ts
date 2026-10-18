@@ -40,10 +40,13 @@ test.describe('board', () => {
     await page.mouse.down();
     await page.mouse.move(from!.x + from!.width / 2 + 15, from!.y + 15, { steps: 4 });
     await page.mouse.move(to!.x + to!.width / 2, to!.y + 40, { steps: 12 });
+    // the card moves instantly (optimistic UI); wait until the server has really saved it before reloading
+    const saved = page.waitForResponse((r) => r.url().includes('/status') && r.request().method() === 'PATCH');
     await page.mouse.up();
 
     await expect(page.getByTestId('count-INTERVIEW')).toHaveText('1');
     await expect(page.getByTestId('count-APPLIED')).toHaveText('0');
+    expect((await saved).ok()).toBe(true);
 
     // the change was saved on the server
     await page.reload();
