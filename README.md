@@ -99,7 +99,7 @@ On Windows, `.\run-local.ps1` starts both and `.\run-local.ps1 -Stop` stops them
 | `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | PostgreSQL connection (JDBC URL) | local `jobtracker` database |
 | `JWT_SECRET` | Signing key, at least 32 characters (the app refuses to start without it) | none |
 | `GEMINI_API_KEY` | Enables the AI features. Empty = AI endpoints answer 503 and the UI falls back to manual entry | empty |
-| `GEMINI_MODEL`, `GEMINI_FALLBACK_MODEL` | Primary and fallback model | `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite` |
+| `GEMINI_MODEL`, `GEMINI_FALLBACK_MODEL` | Primary and fallback model | `gemini-3.1-flash-lite`, `gemini-3.5-flash-lite` |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated list of frontend origins | `http://localhost:4200` |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | SMTP for reminder emails. Without `MAIL_HOST` emails are only logged | empty |
 | `REMINDERS_CRON`, `REMINDERS_ZONE` | When the reminder job runs | `0 0 8 * * *`, `UTC` |

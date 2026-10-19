@@ -33,7 +33,7 @@ services:
       DB_PASSWORD: ${COMPOSE_DB_PASSWORD:-jobtracker}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in the .env file (copy .env.example)}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.1-flash-lite}
       CORS_ALLOWED_ORIGINS: http://localhost:${FRONTEND_PORT:-3000}
       MAIL_HOST: ${MAIL_HOST:-}
       MAIL_PORT: ${MAIL_PORT:-587}
